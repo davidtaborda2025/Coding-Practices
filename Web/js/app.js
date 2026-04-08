@@ -1,11 +1,11 @@
-document.getElementById('btnLogin').addEventListener('click', () => {
-    const user = document.getElementById('user').value.trim();
-    const password = document.getElementById('pass').value;
+document.getElementById('btnLogin').addEventListener('click', async () => {
+    const userValue = document.getElementById('user').value.trim();
+    const passValue = document.getElementById('pass').value;
     const button = document.getElementById('btnLogin');
 
     const msg = document.getElementById('msg');
     msg.style.opacity = "0";
-    msg.classList.remove('shake-error');
+    button.classList.remove('shake-error');
 
     const fadeOutMsg = (seconds) => {
         setTimeout(() => {
@@ -14,32 +14,46 @@ document.getElementById('btnLogin').addEventListener('click', () => {
         }, seconds * 1000);
     };
 
-    setTimeout(() => {
-        if (!user || !password) {
-            msg.style.color = 'crimson';
-            msg.textContent = 'Ingresa usuario y contraseña.';
-            msg.style.opacity = "1";
-            button.classList.add('shake-error');
-            fadeOutMsg(3);
-            return;
-        }
+    if (!userValue || !passValue) {
+        msg.style.color = 'crimson';
+        msg.textContent = 'Ingresa usuario y contraseña.';
+        msg.style.opacity = "1";
+        button.classList.add('shake-error');
+        fadeOutMsg(3);
+        return;
+    }
 
-        const VALID = { user: 'admin', password: 'secret' };
+    try {
+        const response = await fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user: userValue, pass: passValue })
+        });
 
-        if (user === VALID.user && password === VALID.password) {
+        const data = await response.json();
+
+        if (response.ok && data.status === 'success') {
             msg.style.color = 'limegreen';
-            msg.textContent = 'Bienvenido. Autenticado correctamente.';
+            msg.textContent = data.message;
             msg.style.opacity = "1";
             fadeOutMsg(4);
         }
+
         else {
             msg.style.color = 'crimson';
-            msg.textContent = 'Credenciales incorrectas.';
+            msg.textContent = data.message;
             msg.style.opacity = "1";
             button.classList.add('shake-error');
             fadeOutMsg(3);
         }
-    }, 100);
+    }
+
+    catch (error) {
+        msg.style.color = 'orange';
+        msg.textContent = 'Error al conectar con la base de datos.';
+        msg.style.opacity = "1";
+        fadeOutMsg(3);
+    }
 });
 
 const menu = document.getElementById('menu');
