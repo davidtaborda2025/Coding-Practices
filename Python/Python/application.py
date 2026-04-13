@@ -15,6 +15,22 @@ DB_PARAMS = {
     "port": "5432"
 }
 
+# Nueva función para registro de intentos de login. Guarda cada intento para posterior análisis.
+
+def registrar_auditoria(user, estado):
+    try:
+        conn = psycopg2.connect(**DB_PARAMS)
+        cur = conn.cursor()
+
+        query = "INSERT INTO login_auditory (user_tried, state) VALUES (%s, %s)"
+        cur.execute(query, (user, estado))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    except Exception as e:
+        print(f"No se pudo registrar la auditoría: {e}")
+
 @app.route('/login', methods=['POST'])
 def login():
     datos = request.json
@@ -33,8 +49,10 @@ def login():
         conn.close()
 
         if usuario_encontrado:
+            registrar_auditoria(user_web, 'EXITO')
             return jsonify({"status": "success", "message": f"¡Bienvenido, {user_web}! Autenticado correctamente."})
         else:
+            registrar_auditoria(user_web, 'FALLO')
             return jsonify({"status": "error", "message": "Credenciales incorrectas."})
 
     except psycopg2.Error as e:
