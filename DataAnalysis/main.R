@@ -19,3 +19,5 @@ print("--- DATOS RECUPERADOS DESDE DOCKER ---")
 print(datos_auditoria)
 
 print(grafica)
+
+ggsave("../Python/Python/static/reporte_auditoria.png", plot = grafica, width = 8, height = 6, dpi = 100)

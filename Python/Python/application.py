@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import psycopg2
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)  # Hace la comunicación entre el front-end y el back-end.
 
 # Configuraciones con Docker:
@@ -30,6 +30,10 @@ def registrar_auditoria(user, estado):
 
     except Exception as e:
         print(f"No se pudo registrar la auditoría: {e}")
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
 @app.route('/login', methods=['POST'])
 def login():

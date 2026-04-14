@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard de Auditoria</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .card {
+            background-color: #1e1e1e;
+            display: inline-block;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        h1 { color: #2ecc71; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Análisis de Intentos de Login</h1>
+        <p>Datos procesados en tiempo real con R y PostgreSQL</p>
+        <img src="{{ url_for('static', filename='reporte_auditoria.png') }}" alt="Gráfica de Auditoría">
+    </div>
+</body>
+</html>

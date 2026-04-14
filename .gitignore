@@ -26,6 +26,15 @@ __pycache__/
 env/
 venv/
 
+### --- R & DATA ANALYSIS --- ###
+# Ignorar la gráfica generada dinámicamente
+Python/Python/static/reporte_auditoria.png
+
+# Ignorar archivos temporales y de historial de R
+.Rhistory
+.RData
+.Ruserdata
+
 ### --- MAVEN WRAPPER --- ###
 # Permitir solo el jar necesario para que Maven funcione si alguien baja tu proyecto
 !.mvn/wrapper/maven-wrapper.jar
