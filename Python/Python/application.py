@@ -12,7 +12,9 @@ CORS(app)  # Hace la comunicación entre el front-end y el back-end.
 
 @app.route('/')
 def index():
-    return send_from_directory(web_folder, 'index.html')
+    files = os.listdir(os.curdir)
+    return f"Contenido del servidor: {files}"
+    #return send_from_directory(web_folder, 'index.html')
 
 @app.route('/<path:filename>')
 def send_web(filename):
