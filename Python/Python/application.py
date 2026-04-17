@@ -4,16 +4,19 @@ import psycopg2
 import os
 import subprocess
 
-app = Flask(__name__, template_folder='templates', static_folder='static')
+base_dir = os.path.abspath(os.path.dirname(__file__))
+web_folder = os.path.join(base_dir, 'Web')
+
+app = Flask(__name__)
 CORS(app)  # Hace la comunicación entre el front-end y el back-end.
 
 @app.route('/')
 def index():
-    return send_from_directory('Web', 'index.html')
+    return send_from_directory(web_folder, 'index.html')
 
-@app.route('/Web/<path:path>')
-def send_web(path):
-    return send_from_directory('Web', path)
+@app.route('/<path:filename>')
+def send_web(filename):
+    return send_from_directory(web_folder, filename)
 
 # Configuración para funcionamiento online.
 
