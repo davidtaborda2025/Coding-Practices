@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import psycopg2
 import os
@@ -6,6 +6,14 @@ import subprocess
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)  # Hace la comunicación entre el front-end y el back-end.
+
+@app.route('/')
+def index():
+    return send_from_directory('Web', 'index.html')
+
+@app.route('/Web/<path:path>')
+def send_web(path):
+    return send_from_directory('Web', path)
 
 # Configuración para funcionamiento online.
 
