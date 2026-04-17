@@ -1,3 +1,5 @@
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000' : '';
+
 document.getElementById('btnLogin').addEventListener('click', async () => {
     const userValue = document.getElementById('user').value.trim();
     const passValue = document.getElementById('pass').value;
@@ -24,7 +26,7 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch('http://localhost:5000/login', {
+        const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user: userValue, pass: passValue })
@@ -36,7 +38,7 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
             msg.style.color = 'limegreen';
             msg.textContent = data.message;
             msg.style.opacity = "1";
-            window.open('http://localhost:5000/dashboard', '_blank');
+            window.open(`${API_BASE_URL}/dashboard`, '_blank');
             fadeOutMsg(4);
         }
 
