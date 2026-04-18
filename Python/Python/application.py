@@ -4,7 +4,12 @@ import psycopg2
 import os
 import subprocess
 
+# Variables para el comportamiento online.
+
 web_folder = os.path.join(os.getcwd(), 'Web')
+base_dir = os.path.dirname(os.path.abspath(__file__))
+templates_dir = os.path.join(base_dir, 'templates')
+static_dir = os.path.join(base_dir, 'static')
 
 app = Flask(__name__)
 CORS(app)  # Hace la comunicación entre el front-end y el back-end.
@@ -16,6 +21,10 @@ def index():
 @app.route('/<path:path>')
 def serve_static(path):
     return send_from_directory(web_folder, path)
+
+@app.route('/static/<path:filename>')
+def serve_internal_static(filename):
+    return send_from_directory(static_dir, filename)
 
 # Configuración para funcionamiento online.
 
