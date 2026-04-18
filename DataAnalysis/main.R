@@ -2,17 +2,20 @@ library(DBI)
 library(RPostgres)
 library(ggplot2)
 
-db_url <- Sys.getenv("DATABASE_URL")
+db_host <- Sys.getenv("PGHOST")
+db_user <- Sys.getenv("PGUSER")
+db_pass <- Sys.getenv("PGPASSWORD")
+db_port <- Sys.getenv("PGPORT")
+db_name <- Sys.getenv("PGDATABASE")
 
-if (db_url != "") { # Bloque para obtener la URL, bien sea local o en línea.
-  conn_parts <- regexec("postgresql://([^:]+):([^@]+)@([^平衡:]+):(\\d+)/(.+)", db_url)
-  matches <- regmatches(db_url, conn_parts)[[1]]
-
-  con <- dbConnect(RPostgres::Postgres(), user = matches[2], password = matches[3], host = matches[4],
-                    port = as.integer(matches[5]), dbname = matches[6])
-}
-
-else {
+if (db_host != "") { # Bloque para obtener la URL, bien sea local o en línea.
+  con <- dbConnect(RPostgres::Postgres(),
+                   host = db_host,
+                   user = db_user,
+                   password = db_pass,
+                   port = as.integer(db_port),
+                   dbname = db_name)
+} else {
   con <- dbConnect(RPostgres::Postgres(),
                    dbname = 'test_db', host = 'localhost', port = 5432,
                    user = 'administrador_db',
