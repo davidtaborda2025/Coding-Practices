@@ -4,8 +4,26 @@ library(ggplot2)
 
 db_url <- Sys.getenv("DATABASE_URL")
 
-if (db_url != "") { # Bloque para obtener la URL, bien sea local o en línea.
-  con <- dbConnect(RPostgres::Postgres(), url = db_url)
+if (db_url != "") {
+  url_limpia <- gsub("postgresql://", "", db_url)
+  usuario_pass <- strsplit(url_limpia, "@")[[1]][1]
+  host_resto <- strsplit(url_limpia, "@")[[1]][2]
+
+  user <- strsplit(usuario_pass, ":")[[1]][1]
+  pass <- strsplit(usuario_pass, ":")[[1]][2]
+
+  host_puerto <- strsplit(host_resto, "/")[[1]][1]
+  db_name <- strsplit(host_resto, "/")[[1]][2]
+
+  host <- strsplit(host_puerto, ":")[[1]][1]
+  port <- strsplit(host_puerto, ":")[[1]][2]
+
+  con <- dbConnect(RPostgres::Postgres(),
+                   host = host,
+                   port = as.integer(port),
+                   user = user,
+                   password = pass,
+                   dbname = db_name)
 } else {
   con <- dbConnect(RPostgres::Postgres(),
                    dbname = 'test_db', host = 'localhost', port = 5432,
