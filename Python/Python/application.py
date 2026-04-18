@@ -62,7 +62,8 @@ def registrar_auditoria(user, estado):
 @app.route('/dashboard')
 def dashboard():
     try:
-        subprocess.run(["Rscript", "DataAnalysis/main.R"], check=True) # Para ejecutar R antes de mostrar el HTML.
+        path_para_r = os.path.join(static_dir, "reporte_auditoria.png")
+        subprocess.run(["Rscript", "DataAnalysis/main.R", path_para_r], check=True) # Para ejecutar R antes de mostrar el HTML.
 
     except Exception as e:
         print(f"Error ejecutando R: {e}")

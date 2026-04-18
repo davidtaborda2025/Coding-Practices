@@ -23,4 +23,7 @@ grafica <- ggplot(datos_auditoria, aes(x = state, fill = state)) + geom_bar() +
        x = "Estado del Intento", y = "Cantidad de Registros") + theme_minimal() +
   scale_fill_manual(values = c("FALLO" = "#e74c3c", "EXITO" = "#2ecc71"))
 
-ggsave("Python/Python/static/reporte_auditoria.png", plot = grafica, width = 8, height = 6, dpi = 100)
+args <- commandArgs(trailingOnly = TRUE)
+ruta_final <- if(length(args) > 0) args[1] else "Python/Python/static/reporte_auditoria.png"
+
+ggsave(ruta_final, plot = grafica, width = 8, height = 6, dpi = 100)
