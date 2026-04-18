@@ -5,7 +5,11 @@ library(ggplot2)
 db_url <- Sys.getenv("DATABASE_URL")
 
 if (db_url != "") { # Bloque para obtener la URL, bien sea local o en línea.
-  con <- dbConnect(RPostgres::Postgres(), url = db_url)
+  conn_parts <- regexec("postgresql://([^:]+):([^@]+)@([^平衡:]+):(\\d+)/(.+)", db_url)
+  matches <- regmatches(db_url, conn_parts)[[1]]
+
+  con <- dbConnect(RPostgres::Postgres(), user = matches[2], password = matches[3], host = matches[4],
+                    port = as.integer(matches[5]), dbname = matches[6])
 }
 
 else {
