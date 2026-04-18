@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import psycopg2
 import os
@@ -67,7 +67,7 @@ def dashboard():
     except Exception as e:
         print(f"Error ejecutando R: {e}")
 
-    return render_template('dashboard.html')
+    return send_from_directory(templates_dir, 'dashboard.html')
 
 @app.route('/login', methods=['POST'])
 def login():
