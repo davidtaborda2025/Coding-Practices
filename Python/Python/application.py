@@ -38,7 +38,12 @@ def serve_static(path):
 
 @app.route('/static/<path:filename>')
 def serve_internal_static(filename):
-    return send_from_directory(static_dir, filename)
+    response = send_from_directory(static_dir, filename)
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+
+    return response
 
 # Configuración para funcionamiento online.
 
