@@ -34,11 +34,16 @@
         <img src="/static/reporte_auditoria.png" alt="Gráfica de Auditoría">
     </div>
     <script>
+        console.log("Script de auto-refresco cargado correctamente");
         setInterval(function() {
-            const img = document.querySelector('img');
-            const src = img.src.split('?')[0];
-            img.src = src + '?v=' + new Date().getTime();
-            console.log("Gráfica actualizada");
+            const img = document.querySelector('img[alt="Gráfica de Auditoría"]');
+            if (img) {
+                const nuevaUrl = "/static/reporte_auditoria.png?v=" + new Date().getTime();
+                img.src = nuevaUrl;
+                console.log("Solicitando imagen fresca al servidor: " + nuevaUrl);
+            } else {
+                console.error("No se encontró la imagen para actualizar.");
+            }
         }, 10000);
     </script>
 </body>
