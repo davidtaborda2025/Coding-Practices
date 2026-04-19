@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from apscheduler.schedulers.background import BackgroundScheduler
 import psycopg2
 import os
 import subprocess
@@ -13,6 +14,19 @@ static_dir = os.path.join(base_dir, 'static')
 
 app = Flask(__name__)
 CORS(app)  # Hace la comunicación entre el front-end y el back-end.
+
+def ejecutar_r():
+    try:
+        path_para_r = os.path.join(static_dir, "reporte_auditoria.png")
+        subprocess.run(["Rscript", "DataAnalysis/main.R", path_para_r], check=True) # Para ejecutar R antes de mostrar el HTML.
+
+    except Exception as e:
+        print(f"Error ejecutando R: {e}")
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=ejecutar_r, trigger="interval", minutes=3)
+scheduler.add_job(func=ejecutar_r, trigger="date")
+scheduler.start()
 
 @app.route('/')
 def index():
@@ -61,13 +75,6 @@ def registrar_auditoria(user, estado):
 
 @app.route('/dashboard')
 def dashboard():
-    try:
-        path_para_r = os.path.join(static_dir, "reporte_auditoria.png")
-        subprocess.run(["Rscript", "DataAnalysis/main.R", path_para_r], check=True) # Para ejecutar R antes de mostrar el HTML.
-
-    except Exception as e:
-        print(f"Error ejecutando R: {e}")
-
     return send_from_directory(templates_dir, 'dashboard.html')
 
 @app.route('/login', methods=['POST'])
