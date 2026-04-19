@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-RUN R -e "install.packages(c('ggplot2', 'DBI', 'RPostgres'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('ggplot2', 'DBI', 'RPostgres', 'scales'), repos='https://cloud.r-project.org/')"
 
 WORKDIR /app
 
