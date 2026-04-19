@@ -33,5 +33,13 @@
         <p>Datos procesados en tiempo real con R y PostgreSQL</p>
         <img src="/static/reporte_auditoria.png" alt="Gráfica de Auditoría">
     </div>
+    <script>
+        setInterval(function() {
+            const img = document.querySelector('img');
+            const src = img.src.split('?')[0];
+            img.src = src + '?v=' + new Date().getTime();
+            console.log("Gráfica actualizada");
+        }, 10000);
+    </script>
 </body>
 </html>

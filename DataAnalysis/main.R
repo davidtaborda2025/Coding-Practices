@@ -1,6 +1,7 @@
 library(DBI)
 library(RPostgres)
 library(ggplot2)
+library(scales)
 
 db_url <- Sys.getenv("DATABASE_URL")
 
@@ -34,12 +35,16 @@ if (db_url != "") {
 datos_auditoria <- dbReadTable(con, "login_auditory")
 dbDisconnect(con)
 
-grafica <- ggplot(datos_auditoria, aes(x = state, fill = state)) + geom_bar() +
+grafica <- ggplot(datos_auditoria, aes(x = state, fill = state)) + geom_bar(width = 0.6) +
   labs(title = "Analisis de Intentos de Login", subtitle = "Datos obtenidos en tiempo real desde PostgreSQL",
        x = "Estado del Intento", y = "Cantidad de Registros") + theme_minimal() +
-  scale_fill_manual(values = c("FALLO" = "#e74c3c", "EXITO" = "#2ecc71"))
+  scale_fill_manual(values = c("FALLO" = "#e74c3c", "EXITO" = "#2ecc71")) +
+  scale_y_continuous(labels = label_number(accuracy = 1), breaks = pretty_breaks()) +
+  theme(plot.title = element_text(face = "bold", size = 16), plot.margin = margin(20, 40, 20, 20),
+        axis.title.x = element_text(margin = margin(t = 15)), axis.title.y = element_text(margin = margin(r = 15)),
+        legend.position = "right", panel.grid.minor = element_blank())
 
 args <- commandArgs(trailingOnly = TRUE)
 ruta_final <- if(length(args) > 0) args[1] else "Python/Python/static/reporte_auditoria.png"
 
-ggsave(ruta_final, plot = grafica, width = 8, height = 6, dpi = 100)
+ggsave(ruta_final, plot = grafica, width = 9, height = 6, dpi = 120)
