@@ -40,11 +40,12 @@ grafica <- ggplot(datos_auditoria, aes(x = state, fill = state)) + geom_bar(widt
        x = "Estado del Intento", y = "Cantidad de Registros") + theme_minimal() +
   scale_fill_manual(values = c("FALLO" = "#e74c3c", "EXITO" = "#2ecc71")) +
   scale_y_continuous(labels = label_number(accuracy = 1), breaks = pretty_breaks()) +
-  theme(plot.title = element_text(face = "bold", size = 16), plot.margin = margin(20, 40, 20, 20),
+  theme(plot.title = element_text(face = "bold", size = 16, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5), plot.margin = margin(20, 40, 20, 20),
         axis.title.x = element_text(margin = margin(t = 15)), axis.title.y = element_text(margin = margin(r = 15)),
         legend.position = "right", panel.grid.minor = element_blank())
 
 args <- commandArgs(trailingOnly = TRUE)
 ruta_final <- if(length(args) > 0) args[1] else "Python/Python/static/reporte_auditoria.png"
 
-ggsave(ruta_final, plot = grafica, width = 9, height = 6, dpi = 120)
+ggsave(ruta_final, plot = grafica, width = 9, height = 7, dpi = 120)
