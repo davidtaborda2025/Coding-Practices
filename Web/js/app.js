@@ -38,7 +38,7 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
             msg.style.color = 'limegreen';
             msg.textContent = data.message;
             msg.style.opacity = "1";
-            window.open(`${API_BASE_URL}/dashboard`, '_blank');
+            window.open(`${API_BASE_URL}/dashboard?user=${encodeURIComponent(userValue)}`, '_blank');
             fadeOutMsg(4);
         }
 

@@ -25,9 +25,35 @@
             margin-top: 20px;
         }
         h1 { color: #2ecc71; }
+
+        #welcome-toast {
+            visibility: hidden;
+            min-width: 280px;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            color: white;
+            text-align: center;
+            border-radius: 12px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            right: 30px;
+            top: 30px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            transition: visibility 0s, opacity 0.5s linear;
+            opacity: 0;
+        }
+
+        /* noinspection CssUnusedSymbol */
+        #welcome-toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
+    <div id="welcome-toast"></div>
+
     <div class="card">
         <h1>Análisis de Intentos de Login</h1>
         <p>Datos procesados en tiempo real con R y PostgreSQL</p>
@@ -48,6 +74,18 @@
         window.onload = function() {
             console.log("Página cargada o F5 detectado. Forzando refresco inicial...");
             refrescarGrafica();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const usuario = urlParams.get('user');
+
+            if (usuario) {
+                const toast = document.getElementById("welcome-toast");
+                toast.innerText = "¡Bienvenido, " + usuario + "! Autenticado correctamente.";
+                toast.classList.add("show");
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 4000);
+            }
         };
 
         setInterval(refrescarGrafica, 10000);
