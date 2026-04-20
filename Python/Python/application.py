@@ -4,6 +4,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import psycopg2
 import os
 import subprocess
+import time
 
 # Variables para el comportamiento online.
 
@@ -17,8 +18,12 @@ CORS(app)  # Hace la comunicación entre el front-end y el back-end.
 
 def ejecutar_r():
     try:
+        inicio = time.time()
         path_para_r = os.path.join(static_dir, "reporte_auditoria.png")
+        print(f"--- [CRON/LOGIN] Iniciando R ---")
         subprocess.run(["Rscript", "DataAnalysis/main.R", path_para_r], check=True) # Para ejecutar R antes de mostrar el HTML.
+        duracion = round(time.time() - inicio, 2)
+        print(f"--- [CRON/LOGIN] R finalizó con éxito en {duracion} s ---")
 
     except Exception as e:
         print(f"Error ejecutando R: {e}")
@@ -101,9 +106,11 @@ def login():
 
         if usuario_encontrado:
             registrar_auditoria(user_web, 'EXITO')
+            ejecutar_r()
             return jsonify({"status": "success", "message": f"¡Bienvenido, {user_web}! Autenticado correctamente."})
         else:
             registrar_auditoria(user_web, 'FALLO')
+            ejecutar_r()
             return jsonify({"status": "error", "message": "Credenciales incorrectas."})
 
     except psycopg2.Error as e:

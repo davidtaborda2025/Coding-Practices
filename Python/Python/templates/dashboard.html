@@ -34,17 +34,25 @@
         <img src="/static/reporte_auditoria.png" alt="Gráfica de Auditoría">
     </div>
     <script>
-        console.log("Script de auto-refresco cargado correctamente");
-        setInterval(function() {
+        function refrescarGrafica() {
             const img = document.querySelector('img[alt="Gráfica de Auditoría"]');
             if (img) {
-                const nuevaUrl = "/static/reporte_auditoria.png?v=" + new Date().getTime();
-                img.src = nuevaUrl;
-                console.log("Solicitando imagen fresca al servidor: " + nuevaUrl);
+                const timestamp = new Date().getTime();
+                img.src = "/static/reporte_auditoria.png?v=" + timestamp;
+                console.log("Solicitando imagen fresca al servidor: v=" + timestamp);
             } else {
                 console.error("No se encontró la imagen para actualizar.");
             }
-        }, 10000);
+        }
+
+        window.onload = function() {
+            console.log("Página cargada o F5 detectado. Forzando refresco inicial...");
+            refrescarGrafica();
+        };
+
+        setInterval(refrescarGrafica, 10000);
+
+        console.log("Sistema de auto-refresco (F5 + Ciclo) activo.");
     </script>
 </body>
 </html>
