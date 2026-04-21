@@ -4,6 +4,7 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
     const userValue = document.getElementById('user').value.trim();
     const passValue = document.getElementById('pass').value;
     const button = document.getElementById('btnLogin');
+    const loader = document.getElementById('loader');
 
     const msg = document.getElementById('msg');
     msg.style.opacity = "0";
@@ -25,6 +26,10 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
         return;
     }
 
+    loader.style.display = "block";
+    button.disabled = true;
+    button.style.opacity = "0.5";
+
     try {
         const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
@@ -33,6 +38,10 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
         });
 
         const data = await response.json();
+
+        loader.style.display = "none";
+        button.disabled = false;
+        button.style.opacity = "1";
 
         if (response.ok && data.status === 'success') {
             msg.style.color = 'limegreen';
@@ -52,6 +61,9 @@ document.getElementById('btnLogin').addEventListener('click', async () => {
     }
 
     catch (error) {
+        loader.style.display = "none";
+        button.disabled = false;
+        button.style.opacity = "1";
         msg.style.color = 'orange';
         msg.textContent = 'Error al conectar con la base de datos.';
         msg.style.opacity = "1";
