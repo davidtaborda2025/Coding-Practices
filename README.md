@@ -1,4 +1,4 @@
-# CODING PRACTICES
+<h1 align="center"><b>CODING PRACTICES</b></h1>
 
 Repositorio creado para subir aquellos avances significativos que, bajo mi perspectiva, puedan valer la pena conservar.
 
@@ -17,3 +17,4 @@ qué se hizo y los lenguajes utilizados.
 |  Abril 17 - 2026  | Subida de nuevas configuraciones hechas para soporte en línea de la aplicación.                                                                                                                                                                                                                | Python, R, JavaScript y Dockerfile |
 |  Abril 19 - 2026  | Subida de modificaciones en varios archivos de todas las capas, con el fin de que la aplicación funcione totalmente de forma online.                                                                                                                                                           |    Python, R, HTML y Dockerfile    |
 |  Abril 20 - 2026  | Subida de archivos de backend, dashboard y lógica visual, para enseñar notificación con mensaje de bienvenida.                                                                                                                                                                                 |     Python, HTML y JavaScript      |
+|  Abril 23 - 2026  | Subida de nuevo archivo de LaTeX, apoyado de la herramienta MiKTex, para la generación de un reporte en PDF sobre el proceso ejecutado por el usuario en el login.                                                                                                                             |           Python y LaTeX           |

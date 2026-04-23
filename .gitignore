@@ -35,6 +35,20 @@ Python/Python/static/reporte_auditoria.png
 .RData
 .Ruserdata
 
+### --- LATEX (REPORTE DE AUDITORÍA) --- ###
+# Ignorar archivos auxiliares que genera MiKTeX al compilar
+Documents/*.aux
+Documents/*.log
+Documents/*.out
+Documents/*.toc
+Documents/*.synctex.gz
+Documents/*.fdb_latexmk
+Documents/*.fls
+
+# Ignorar el PDF generado (se crea dinámicamente en local o se omite en nube)
+Python/Python/static/*.pdf
+Documents/*.pdf
+
 ### --- MAVEN WRAPPER --- ###
 # Permitir solo el jar necesario para que Maven funcione si alguien baja tu proyecto
 !.mvn/wrapper/maven-wrapper.jar
