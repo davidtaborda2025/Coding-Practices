@@ -20,14 +20,25 @@ def ejecutar_r():
     try:
         inicio = time.time()
         path_para_r = os.path.join(static_dir, "reporte_auditoria.png")
-        print(f"--- [CRON/LOGIN] Iniciando R ---")
-        subprocess.run(["Rscript", "DataAnalysis/main.R", path_para_r], check=True) # Para ejecutar R antes de mostrar el HTML.
+
+        # --- Detección del ambiente en donde se está ejecutando el código.
+
+        if os.getenv('DATABASE_URL'): # Si es verdadero, ejecutará de forma online.
+            ruta_script_r = os.path.join(os.getcwd(), "DataAnalysis", "main.R")
+            ruta_tex = os.path.join(os.getcwd(), "Documents", "Resultados_de_Acciones.tex")
+
+        else:
+            ruta_script_r = os.path.abspath(os.path.join(base_dir, "..", "..", "DataAnalysis", "main.R"))
+            ruta_tex = os.path.abspath(os.path.join(base_dir, "..", "..", "Documents", "Resultados_de_Acciones.tex"))
+
+        print(f"--- [CRON/LOGIN] Iniciando R en: {ruta_script_r} ---")
+        subprocess.run(["Rscript", ruta_script_r, path_para_r], check=True) # Para ejecutar R antes de mostrar el HTML.
 
         try:
             # Para comprobación de PDF instalado.
             subprocess.run(["pdflatex", "--version"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
             print(f"--- [LATEX] Generando reporte formal en PDF ---")
-            subprocess.run(["pdflatex", "-interaction=nonstopmode", f"-output-directory={static_dir}", "Documents/Resultados_de_Acciones.tex"], check=True)
+            subprocess.run(["pdflatex", "-interaction=nonstopmode", f"-output-directory={static_dir}", ruta_tex], check=True)
 
         except (FileNotFoundError, subprocess.CalledProcessError):
             # Para evitar la generación del PDF (modo en línea).
