@@ -47,6 +47,8 @@ Documents/*.fls
 
 # Ignorar el PDF generado (se crea dinámicamente en local o se omite en nube)
 Python/Python/static/*.pdf
+Python/Python/static/*.log
+Python/Python/static/*.aux
 Documents/*.pdf
 
 ### --- MAVEN WRAPPER --- ###
