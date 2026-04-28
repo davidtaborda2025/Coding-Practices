@@ -5,6 +5,7 @@ import psycopg2
 import os
 import subprocess
 import time
+import threading
 
 # Variables para el comportamiento online.
 
@@ -128,11 +129,13 @@ def login():
 
         if usuario_encontrado:
             registrar_auditoria(user_web, 'EXITO')
-            ejecutar_r()
+            hilo_analitica = threading.Thread(target=ejecutar_r) # Definición de un hilo para ejecutar el proceso de R.
+            hilo_analitica.start()
             return jsonify({"status": "success", "message": f"¡Bienvenido, {user_web}! Autenticado correctamente."})
         else:
             registrar_auditoria(user_web, 'FALLO')
-            ejecutar_r()
+            hilo_analitica = threading.Thread(target=ejecutar_r)
+            hilo_analitica.start()
             return jsonify({"status": "error", "message": "Credenciales incorrectas."})
 
     except psycopg2.Error as e:

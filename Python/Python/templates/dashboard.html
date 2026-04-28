@@ -4,19 +4,32 @@
     <meta charset="UTF-8">
     <title>Dashboard de Auditoria</title>
     <style>
-        body {
-            background-color: #121212;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding-top: 50px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
         }
-        .card {
-            background-color: #1e1e1e;
-            display: inline-block;
-            padding: 20px;
+        body {
+            background-color: #0d0d0d;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .card-dashboard {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            text-align: center;
+            max-width: 850px;
+            width: 100%;
         }
         img {
             max-width: 100%;
@@ -24,24 +37,65 @@
             border-radius: 8px;
             margin-top: 20px;
         }
-        h1 { color: #2ecc71; }
+        h1 {
+            color: #00ffff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ffff;
+            font-size: 2rem;
+        }
+        p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .grafica-wrapper {
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .loading-text {
+            color: #00ff80;
+            font-style: italic;
+            animation: pulse 1.5s infinite ease-in-out;
+            text-shadow: 0 0 5px #00ff80;
+            position: absolute;
+            z-index: 10;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        #grafica-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            transition: opacity 0.8s ease-in-out;
+            display: block;
+        }
 
         #welcome-toast {
             visibility: hidden;
             min-width: 280px;
-            background: linear-gradient(90deg, #2ecc71, #27ae60);
-            color: white;
+            background: linear-gradient(90deg, #00ffff, #00ff80);
+            color: #000;
             text-align: center;
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 50px;
+            padding: 16px 25px;
             position: fixed;
             z-index: 1000;
             right: 30px;
             top: 30px;
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
-            transition: visibility 0s, opacity 0.5s linear;
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
             opacity: 0;
+            transition: opacity 0.6s ease-in-out, visibility 0.6s;
         }
 
         /* noinspection CssUnusedSymbol */
@@ -54,26 +108,38 @@
 <body>
     <div id="welcome-toast"></div>
 
-    <div class="card">
-        <h1>Análisis de Intentos de Login</h1>
-        <p>Datos procesados en tiempo real con R y PostgreSQL</p>
-        <img src="/static/reporte_auditoria.png" alt="Gráfica de Auditoría">
+    <div class="card-dashboard">
+        <h1 style="color: #00ffff; text-shadow: 0 0 10px #00ffff;">Análisis de Intentos de Login</h1>
+        <p style="color: rgba(255, 255, 255, 0.7);">Datos procesados en tiempo real con R y PostgreSQL</p>
+
+        <div class="grafica-wrapper">
+            <div id="loader-texto" class="loading-text">
+                Actualizando estadísticas en tiempo real...
+            </div>
+            <img id="grafica-img" src="" alt="Gráfica de Auditoría" style="opacity: 0;">
+        </div>
     </div>
+
     <script>
+        const loader = document.getElementById('loader-texto');
+        const img = document.getElementById('grafica-img');
+
         function refrescarGrafica() {
-            const img = document.querySelector('img[alt="Gráfica de Auditoría"]');
-            if (img) {
-                const timestamp = new Date().getTime();
-                img.src = "/static/reporte_auditoria.png?v=" + timestamp;
-                console.log("Solicitando imagen fresca al servidor: v=" + timestamp);
-            } else {
-                console.error("No se encontró la imagen para actualizar.");
-            }
+            const timestamp = new Date().getTime();
+            loader.style.display = 'block';
+            img.style.opacity = '0';
+
+            img.src = "/static/reporte_auditoria.png?v=" + timestamp;
+            console.log("Solicitando imagen fresca al servidor: v=" + timestamp);
+        }
+
+        img.onload = function() {
+            loader.style.display = 'none';
+            img.style.opacity = '1';
         }
 
         window.onload = function() {
             console.log("Página cargada o F5 detectado. Forzando refresco inicial...");
-            refrescarGrafica();
 
             const urlParams = new URLSearchParams(window.location.search);
             const usuario = urlParams.get('user');
@@ -86,6 +152,8 @@
                     toast.classList.remove("show");
                 }, 4000);
             }
+
+            refrescarGrafica();
         };
 
         setInterval(refrescarGrafica, 10000);
