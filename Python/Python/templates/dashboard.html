@@ -55,7 +55,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.3);
+            background: transparent;
             border-radius: 10px;
             margin-top: 20px;
             overflow: hidden;
@@ -76,8 +76,8 @@
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            transition: opacity 0.8s ease-in-out;
-            display: block;
+            transition: opacity 0.5s ease-in-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         #welcome-toast {
@@ -123,12 +123,10 @@
     <script>
         const loader = document.getElementById('loader-texto');
         const img = document.getElementById('grafica-img');
+        let initialAttempts = 0;
 
         function refrescarGrafica() {
             const timestamp = new Date().getTime();
-            loader.style.display = 'block';
-            img.style.opacity = '0';
-
             img.src = "/static/reporte_auditoria.png?v=" + timestamp;
             console.log("Solicitando imagen fresca al servidor: v=" + timestamp);
         }
@@ -140,6 +138,8 @@
 
         window.onload = function() {
             console.log("Página cargada o F5 detectado. Forzando refresco inicial...");
+
+            refrescarGrafica();
 
             const urlParams = new URLSearchParams(window.location.search);
             const usuario = urlParams.get('user');
@@ -153,11 +153,15 @@
                 }, 4000);
             }
 
-            refrescarGrafica();
+            const fastRefresh = setInterval(() => {
+                refrescarGrafica();
+                initialAttempts++;
+
+                if (initialAttempts >= 3) clearInterval(fastRefresh);
+            }, 2500);
         };
 
-        setInterval(refrescarGrafica, 10000);
-
+        setInterval(refrescarGrafica, 20000);
         console.log("Sistema de auto-refresco (F5 + Ciclo) activo.");
     </script>
 </body>
