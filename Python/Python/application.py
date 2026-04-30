@@ -73,6 +73,10 @@ def serve_internal_static(filename):
 
     return response
 
+@app.route('/favicon.png')
+def favicon():
+    return send_from_directory(web_folder, 'favicon.png')
+
 # Configuración para funcionamiento online.
 
 DATABASE_URL = os.getenv('DATABASE_URL') # Para obtener URL generada en línea.
