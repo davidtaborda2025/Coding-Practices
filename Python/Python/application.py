@@ -75,7 +75,12 @@ def serve_internal_static(filename):
 
 @app.route('/favicon.png')
 def favicon():
-    return send_from_directory(web_folder, 'favicon.png')
+    if os.environ.get('DATABASE_URL'):
+        return send_from_directory(web_folder, 'favicon.png')
+
+    else:
+        local_icon_path = os.path.join(os.getcwd(), 'Web')
+        return send_from_directory(local_icon_path, 'favicon.png')
 
 # Configuración para funcionamiento online.
 
