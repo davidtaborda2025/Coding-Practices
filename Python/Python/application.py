@@ -79,7 +79,7 @@ def favicon():
         return send_from_directory(web_folder, 'favicon.png')
 
     else:
-        local_icon_path = os.path.join(os.getcwd(), 'Web')
+        local_icon_path = os.path.abspath(os.path.join(base_dir, "..", "..", "Web"))
         return send_from_directory(local_icon_path, 'favicon.png')
 
 # Configuración para funcionamiento online.
