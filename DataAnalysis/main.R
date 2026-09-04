@@ -3,14 +3,14 @@ library(RPostgres)
 library(ggplot2)
 library(scales)
 
-db_url <- Sys.getenv("DATABASE_URL")
+db_url <- trimws(Sys.getenv("DATABASE_URL"))
 
 if (db_url != "") {
   if (grepl("^postgres://", db_url)) {
     db_url <- sub("^postgres://", "postgresql://", db_url)
   }
 
-  con <- dbConnect(RPostgres::Postgres(), db_url)
+  con <- dbConnect(RPostgres::Postgres(), dbname = db_url)
 } else {
   con <- dbConnect(RPostgres::Postgres(),
                    dbname = 'test_db', host = 'localhost', port = 5432,
