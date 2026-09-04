@@ -53,4 +53,4 @@ grafica <- ggplot(datos_auditoria, aes(x = state, fill = state)) + geom_bar(widt
 args <- commandArgs(trailingOnly = TRUE)
 ruta_final <- if(length(args) > 0) args[1] else "Python/Python/static/reporte_auditoria.png"
 
-ggsave(ruta_final, plot = grafica, width = 9, height = 7, dpi = 120)
+ggsave(ruta_final, plot = grafica, width = 9, height = 7, dpi = 100)
