@@ -20,4 +20,6 @@ COPY . .
 
 RUN chmod -R 777 Python/Python/static
 
+EXPOSE 5000
+
 CMD ["python", "Python/Python/application.py"]

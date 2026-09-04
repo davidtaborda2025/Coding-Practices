@@ -6,25 +6,31 @@ library(scales)
 db_url <- Sys.getenv("DATABASE_URL")
 
 if (db_url != "") {
-  url_limpia <- gsub("postgresql://", "", db_url)
-  usuario_pass <- strsplit(url_limpia, "@")[[1]][1]
-  host_resto <- strsplit(url_limpia, "@")[[1]][2]
+  if (grepl("^postgres://", db_url)) {
+    db_url <- sub("^postgres://", "postgresql://", db_url)
+  }
 
-  user <- strsplit(usuario_pass, ":")[[1]][1]
-  pass <- strsplit(usuario_pass, ":")[[1]][2]
+  tryCatch({
+    con <- dbConnect(RPostgres::Postgres(), url = db_url)
+  }, error = function(e) {
+    url_limpia <- gsub("postgresql://", "", db_url)
+    partes_query <- strsplit(url_limpia, "\\?")[[1]]
+    host_db <- partes_query[1]
 
-  host_puerto <- strsplit(host_resto, "/")[[1]][1]
-  db_name <- strsplit(host_resto, "/")[[1]][2]
+    usuario_pass <- strsplit(host_db, "@")[[1]][1]
+    host_resto <- strsplit(host_db, "@")[[1]][2]
 
-  host <- strsplit(host_puerto, ":")[[1]][1]
-  port <- strsplit(host_puerto, ":")[[1]][2]
+    user <- strsplit(usuario_pass, ":")[[1]][1]
+    pass <- strsplit(usuario_pass, ":")[[1]][2]
 
-  con <- dbConnect(RPostgres::Postgres(),
-                   host = host,
-                   port = as.integer(port),
-                   user = user,
-                   password = pass,
-                   dbname = db_name)
+    host_puerto <- strsplit(host_resto, "/")[[1]][1]
+    db_name <- strsplit(host_resto, "/")[[1]][2]
+
+    host <- strsplit(host_puerto, ":")[[1]][1]
+    port <- strsplit(host_puerto, ":")[[1]][2]
+
+    con <<- dbConnect(RPostgres::Postgres(), host = host, port = as.integer(port), user = user, password = pass, dbname = db_name, sslmode = "require")
+  })
 } else {
   con <- dbConnect(RPostgres::Postgres(),
                    dbname = 'test_db', host = 'localhost', port = 5432,

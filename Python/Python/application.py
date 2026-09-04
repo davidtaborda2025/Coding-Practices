@@ -9,10 +9,16 @@ import threading
 
 # Variables para el comportamiento online.
 
-web_folder = os.path.join(os.getcwd(), 'Web')
 base_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.abspath(os.path.join(base_dir, "..", ".."))
 templates_dir = os.path.join(base_dir, 'templates')
 static_dir = os.path.join(base_dir, 'static')
+
+if os.path.exists(os.path.join(root_dir, "Web")):
+    web_folder = os.path.join(root_dir, "Web")
+
+else:
+    web_folder = os.path.join(os.getcwd(), 'Web')
 
 app = Flask(__name__)
 CORS(app)  # Hace la comunicación entre el front-end y el back-end.
@@ -25,8 +31,12 @@ def ejecutar_r():
         # --- Detección del ambiente en donde se está ejecutando el código.
 
         if os.getenv('DATABASE_URL'): # Si es verdadero, ejecutará de forma online.
-            ruta_script_r = os.path.join(os.getcwd(), "DataAnalysis", "main.R")
-            ruta_tex = os.path.join(os.getcwd(), "Documents", "Resultados_de_Acciones.tex")
+            ruta_script_r = os.path.join(root_dir, "DataAnalysis", "main.R")
+
+            if not os.path.exists(ruta_script_r):
+                ruta_script_r = os.path.join(os.getcwd(), "DataAnalysis", "main.R")
+
+            ruta_tex = os.path.join(root_dir, "Documents", "Resultados_de_Acciones.tex")
 
         else:
             ruta_script_r = os.path.abspath(os.path.join(base_dir, "..", "..", "DataAnalysis", "main.R"))
@@ -53,7 +63,6 @@ def ejecutar_r():
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=ejecutar_r, trigger="interval", minutes=3)
-scheduler.add_job(func=ejecutar_r, trigger="date")
 scheduler.start()
 
 @app.route('/')
@@ -75,29 +84,26 @@ def serve_internal_static(filename):
 
 @app.route('/favicon.png')
 def favicon():
-    if os.environ.get('DATABASE_URL'):
+    if os.path.exists(os.path.join(web_folder, 'favicon.png')):
         return send_from_directory(web_folder, 'favicon.png')
 
     else:
         local_icon_path = os.path.abspath(os.path.join(base_dir, "..", "..", "Web"))
         return send_from_directory(local_icon_path, 'favicon.png')
 
-# Configuración para funcionamiento online.
-
-DATABASE_URL = os.getenv('DATABASE_URL') # Para obtener URL generada en línea.
+# Configuración para funcionamiento online. Al cambiar a Neon.tech, se adapta la función a este nuevo ambiente.
 
 def get_db_connection():
-    if DATABASE_URL:
-        return psycopg2.connect(DATABASE_URL)
+    db_url = os.getenv('DATABASE_URL')
+
+    if db_url:
+        if db_url.startswith('postgres://'):
+            db_url = db_url.replace('postgres://', 'postgresql://', 1)
+
+        return psycopg2.connect(db_url, sslmode='require')
 
     else:
-        return psycopg2.connect(
-            host="localhost",
-            database="test_db",
-            user="administrador_db",
-            password="password123",
-            port="5432"
-        )
+        return psycopg2.connect(host="localhost", database="test_db", user="administrador_db", password="password123", port="5432")
 
 # Nueva función para registro de intentos de login. Guarda cada intento para posterior análisis.
 

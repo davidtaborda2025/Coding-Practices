@@ -1,6 +1,7 @@
 -- Para mantener una base de datos limpia, en caso de fallas.
 
 DROP TABLE IF EXISTS login_auditory;
+DROP TABLE IF EXISTS users;
 
 -- Creación de tabla para los usuarios.
 
