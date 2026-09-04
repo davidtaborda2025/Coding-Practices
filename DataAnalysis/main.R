@@ -2,34 +2,31 @@ library(DBI)
 library(RPostgres)
 library(ggplot2)
 library(scales)
-library(urltools)
 
 db_url <- trimws(Sys.getenv("DATABASE_URL"))
 
 if (db_url != "") {
-  if (grepl("^postgres://", db_url)) {
-    db_url <- sub("^postgres://", "postgresql://", db_url)
+  patron <- "^postgres(?:ql)?://([^:]+):([^@]+)@([^:/]+)(?::(\\d+))?/([^?]+)"
+  matches <- regmatches(db_url, regexec(patron, db_url, perl = TRUE))[[1]]
+
+  if (length(matches) >= 6) {
+    db_user <- matches[2]
+    db_pass <- matches[3]
+    db_host <- matches[4]
+    db_port <- if (matches[5] != "") as.integer(matches[5]) else 5432
+    db_name <- matches[6]
+
+    con <- dbConnect(RPostgres::Postgres(),
+                     host = db_host,
+                     port = db_port,
+                     user = db_user,
+                     password = db_pass,
+                     dbname = db_name,
+                     sslmode = "require")
+  } else {
+    # Fallback si por alguna razón la URI difiere
+    con <- dbConnect(RPostgres::Postgres(), dbname = db_url)
   }
-
-  parsed_url <- url_parse(db_url)
-
-  user_info <- strsplit(parsed_url$user, ":")[[1]]
-  db_user <- user_info[1]
-  db_pass <- ifelse(length(user_info) > 1, user_info[2], "")
-
-  raw_path <- parsed_url$path
-  db_name <- gsub("^/", "", strsplit(raw_path, "\\?")[[1]][1])
-
-  db_host <- parsed_url$domain
-  db_port <- ifelse(!is.na(parsed_url$port) && parsed_url$port != "", as.integer(parsed_url$port), 5432)
-
-  con <- dbConnect(RPostgres::Postgres(),
-                   host = db_host,
-                   port = db_port,
-                   user = db_user,
-                   password = db_pass,
-                   dbname = db_name,
-                   sslmode = "require")
 } else {
   con <- dbConnect(RPostgres::Postgres(),
                    dbname = 'test_db', host = 'localhost', port = 5432,
