@@ -10,7 +10,7 @@ if (db_url != "") {
     db_url <- sub("^postgres://", "postgresql://", db_url)
   }
 
-  con <- dbConnect(RPostgres::Postgres(), url = db_url)
+  con <- dbConnect(RPostgres::Postgres(), db_url)
 } else {
   con <- dbConnect(RPostgres::Postgres(),
                    dbname = 'test_db', host = 'localhost', port = 5432,
